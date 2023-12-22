@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Internal Server Error</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+        integrity="sha512-b2QcS5SsA8tZodcDtGRELiGv5SaKSk1vDHDaQRda0htPYWZ6046lr3kJ5bAAQdpV2mmA/4v0wQF9MyU6/pDIAg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+        integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/animate.min.css') }}">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --dk-gray-100: #F3F4F6;
+            --dk-gray-200: #E5E7EB;
+            --dk-gray-300: #D1D5DB;
+            --dk-gray-400: #9CA3AF;
+            --dk-gray-500: #6B7280;
+            --dk-gray-600: #4B5563;
+            --dk-gray-700: #374151;
+            --dk-gray-800: #1F2937;
+            --dk-gray-900: #111827;
+            --dk-dark-bg: #313348;
+            --dk-darker-bg: #2a2b3d;
+        }
+
+        body {
+            background-color: var(--dk-gray-600);
+
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        h1 {
+            font-size: 10rem;
+            font-weight: bold;
+            color: #dc3545;
+            text-shadow: 2px 2px var(--dk-dark-bg);
+            animation: animate__animated animate__bounceInDown animate__delay-1s;
+        }
+
+        p {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #343a40;
+            text-shadow: 2px 2px var(--dk-dark-bg);
+            animation: animate__animated animate__bounceInUp animate__delay-2s;
+        }
+
+        .btn {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+            animation: animate__animated animate__bounceIn animate__delay-3s;
+        }
+
+        .btn:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        .error {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #dc3545;
+            text-shadow: 2px 2px var(--dk-dark-bg);
+            animation: animate__animated animate__bounceIn animate__delay-1s;
+        }
+
+        .message {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #343a40;
+            text-shadow: 2px 2px var(--dk-dark-bg);
+            animation: animate__animated animate__bounceIn animate__delay-2s;
+        }
+
+        .home {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+            animation: animate__animated animate__bounceIn animate__delay-3s;
+        }
+
+        .home:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container text-center">
+        <h1 class="error animate__animated animate__bounceInDown animate__delay-1s">500</h1>
+        <p class="message animate__animated animate__bounceInUp animate__delay-1s" style="color: thistle;">Oops! Looks
+            like Something goes wrong.</p>
+        <p class="message animate__animated animate__bounceInUp animate__delay-2s"><span
+                style="color: red;font-weight: bolder;">Error</span>: <span style="color: aquamarine;">{{error}}</span>
+        </p>
+        <a href="/index" class="btn home btn-lg animate__animated animate__bounceIn animate__delay-3s">Go Home</a>
+    </div>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.min.js"
+        integrity="sha512-WW8/jxkELe2CAiE4LvQfwm1rajOS8PHasCCx+knHG0gBHt8EXxS6T6tJRTGuDQVnluuAvMxWF4j8SNFDKceLFg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Animate.js -->
+    <script src="https://cdn.jsdelivr.net/npm/animate-js@0.3.2/src/index.min.js"></script>
+
+</body>
+
+</html>

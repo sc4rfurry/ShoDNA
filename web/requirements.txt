@@ -1,0 +1,12 @@
+flask
+markdown2
+gunicorn
+rich
+python-dotenv
+shodan
+IPy
+ipaddress
+python-whois
+html5lib
+user-agent
+python3-nmap

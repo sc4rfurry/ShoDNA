@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}Search - ShoDNA{% endblock %}
+
+{% block custom_css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/search.css') }}">
+
+<style>
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-control:focus {
+        color: #495057;
+        background-color: #fff;
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .form-control:invalid {
+        border-color: #dc3545;
+        background-color: #fff;
+    }
+
+    .form-control:valid {
+        border-color: #28a745;
+        background-color: #fff;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+
+    .expandable-heading {
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background-color 0.2s;
+        padding: 10px;
+        border: 1px solid #eee;
+        background-color: #f5f5f5;
+        margin: 5px 0;
+    }
+
+    .expandable-heading:hover {
+        background-color: #e9e9e9;
+    }
+
+    .hidden-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-in-out;
+    }
+
+    .retro-table {
+        display: grid;
+        grid-template-columns: auto auto auto;
+        border: 1px solid #eee;
+        border-collapse: collapse;
+        margin: 10px 0;
+    }
+
+    .retro-table th,
+    .retro-table td {
+        padding: 8px;
+        text-align: left;
+        border: 1px solid #eee;
+    }
+
+    .retro-table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+    }
+
+    .copy-icon {
+        font-size: 26px;
+        cursor: pointer;
+    }
+
+    .copy-icon:hover {
+        cursor: pointer;
+        color: blue;
+    }
+
+    .tooltiptext {
+        visibility: hidden;
+        width: 120px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .copy-icon:hover .tooltiptext {
+        visibility: visible;
+    }
+</style>
+
+{% endblock %}
+
+{% block body_section %}
+<div class="container-fluid p-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow">
+                <div class="card-body p-5">
+                    <h1 class="mb-4" style="text-align: center; color: seashell;">Results</h1>
+                    <hr>
+                    {% if sc != 200 %}
+                    <table class="retro-table">
+                        <tr>
+                            <td style="color: gold; text-align: left;">Error</td>
+                            <td style="color: rgb(214, 19, 19); font-weight: bold;">{{sc}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{sc}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: left;">Reason</td>
+                            <td style="color: chartreuse; font-weight: bold;">{{rn}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{rn}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: left;">Content</td>
+                            <td style="color: chartreuse; font-weight: bold;">{{txt}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{txt}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: left;">Headers</td>
+                            <td style="color: chartreuse; font-weight: bold;">{{hdrs}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{hdrs}}">📋</span></td>
+                        </tr>
+                    </table>
+                    <div class="hidden-content">
+                        <p style="color: seashell;">Reason: <span
+                                style="color: chartreuse; font-weight: bold;">{{rn}}</span></p>
+                        <p style="color: seashell;">Text: <span
+                                style="color: chartreuse; font-weight: bold;">{{txt}}</span></p>
+                        <p style="color: seashell;">Headers: <span
+                                style="color: chartreuse; font-weight: bold;">{{hdrs}}</span></p>
+                    </div>
+                    {% else %}
+                    <table class="retro-table">
+                        <tr>
+                            <td style="color: gold; text-align: center;">CPES</td>
+                            <td style="color: greenyellow; text-align: center;">{{cpes}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{cpes}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: center;">Hostnames</td>
+                            <td style="color: greenyellow; text-align: center;">{{hostnames}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{hostnames}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: center;">IP</td>
+                            <td style="color: greenyellow; text-align: center;">{{ip}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{ip}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: center;">Ports</td>
+                            <td style="color: greenyellow; text-align: center;">{{ports}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{ports}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: center;">Tags</td>
+                            <td style="color: greenyellow; text-align: center;">{{tags}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{tags}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: center;">Vulns</td>
+                            <td style="color: greenyellow; text-align: center;">{{vulns}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{vulns}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: center;">Status Code</td>
+                            <td style="color: greenyellow; text-align: center;">{{sc}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{sc}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: center;">Reason</td>
+                            <td style="color: greenyellow; text-align: center;">{{rn}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{rn}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: center;">Content</td>
+                            <td style="color: greenyellow; text-align: center;">{{txt}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{txt}}">📋</span></td>
+                        </tr>
+                        <tr>
+                            <td style="color: gold; text-align: center;">Headers</td>
+                            <td style="color: greenyellow; text-align: center;">{{hdrs}}</td>
+                            <td><span class="copy-icon" data-clipboard="{{hdrs}}">📋</span></td>
+                        </tr>
+                    </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block custom_js %}
+<script>
+    function copyToClipboard(text) {
+        var dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = text;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+
+        var toast = document.createElement("div");
+        toast.classList.add("toast");
+        toast.classList.add("position-fixed");
+        toast.classList.add("bottom-0");
+        toast.classList.add("end-0");
+        toast.setAttribute("role", "alert");
+        toast.setAttribute("aria-live", "assertive");
+        toast.setAttribute("aria-atomic", "true");
+        toast.setAttribute("data-bs-delay", "3000");
+        toast.style.margin = "8px";
+        toast.style.zIndex = "9999";
+
+
+        var toastHeader = document.createElement("div");
+        toastHeader.classList.add("toast-header");
+        toastHeader.style.backgroundColor = "sandybrown";
+        toastHeader.style.color = "black";
+        toastHeader.style.borderBottom = "1px solid black";
+        toastHeader.style.textAlign = "center";
+
+        var toastTitle = document.createElement("strong");
+        toastTitle.classList.add("me-auto");
+        toastTitle.innerText = "Copied!";
+        toastHeader.style.fontSize = "20px";
+        toastHeader.appendChild(toastTitle);
+
+        var toastButton = document.createElement("button");
+        toastButton.classList.add("btn-close");
+        toastButton.setAttribute("type", "button");
+        toastButton.setAttribute("data-bs-dismiss", "toast");
+        toastButton.setAttribute("aria-label", "Close");
+        toastHeader.appendChild(toastButton);
+
+        toast.appendChild(toastHeader);
+
+        var toastBody = document.createElement("div");
+        toastBody.classList.add("toast-body");
+        toastBody.innerText = text;
+        toastBody.style.backgroundColor = "darkorchid";
+        toastBody.style.fontSize = "17px";
+        toastBody.style.color = "cyan";
+        toastBody.style.textAlign = "center";
+        toast.appendChild(toastBody);
+
+        document.body.appendChild(toast);
+
+        var toast = new bootstrap.Toast(toast);
+        toast.show();
+    }
+
+    var copyIcons = document.querySelectorAll(".copy-icon");
+    copyIcons.forEach(function (icon) {
+        icon.addEventListener("click", function () {
+            var dataToCopy = icon.getAttribute("data-clipboard");
+            copyToClipboard(dataToCopy);
+        });
+    });
+
+    var expandableHeadings = document.querySelectorAll(".expandable-heading");
+    expandableHeadings.forEach(function (heading) {
+        heading.addEventListener("click", function () {
+            var hiddenContent = heading.nextElementSibling;
+            hiddenContent.classList.toggle("hidden-content");
+        });
+    });
+
+</script>
+
+{% endblock %}

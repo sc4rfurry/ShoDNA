@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block welcome %}
+{% endblock %}
+
+{% block body_section %}
+<div class="container">
+    <h1 class="text-center mt-5" style="color: aliceblue; font-size: 30px; font-weight: bolder;">Shodan Dorks</h1>
+    <hr>
+    {% for heading, content in data.items() %}
+    <div class="alert alert-primary" role="alert" style="text-align: center;">
+        {{ heading }}
+    </div>
+    <ul class="list-group">
+        {% for line in content %}
+        <li class="list-group-item d-flex justify-content-between align-items-center"
+            style="position: relative; cursor: pointer; transition: all 0.3s;">
+            <span>{{ line }}</span>
+            <a href="#" class="copy-icon" data-content="{{ line }}">
+                <i class="far fa-copy"></i>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <br>
+    {% endfor %}
+</div>
+
+<script>
+    document.querySelectorAll(".copy-icon").forEach(function (icon) {
+        icon.addEventListener("click", function (e) {
+            e.preventDefault();
+            var content = icon.dataset.content;
+            if (content.includes(":")) {
+                content = content.substring(content.indexOf(":") + 1);
+            }
+            copyToClipboard(content);
+        });
+    });
+
+    document.querySelectorAll(".list-group-item").forEach(function (item) {
+        item.addEventListener("mouseenter", function () {
+            item.style.backgroundColor = "#f0f0f0";
+        });
+
+        item.addEventListener("mouseleave", function () {
+            item.style.backgroundColor = "";
+        });
+    });
+
+    function copyToClipboard(text) {
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+
+        var toast = document.createElement("div");
+        toast.classList.add("toast");
+        toast.classList.add("position-fixed");
+        toast.classList.add("bottom-0");
+        toast.classList.add("end-0");
+        toast.setAttribute("role", "alert");
+        toast.setAttribute("aria-live", "assertive");
+        toast.setAttribute("aria-atomic", "true");
+        toast.setAttribute("data-bs-delay", "3000");
+        toast.style.margin = "8px";
+        toast.style.zIndex = "9999";
+
+
+        var toastHeader = document.createElement("div");
+        toastHeader.classList.add("toast-header");
+        toastHeader.style.backgroundColor = "sandybrown";
+        toastHeader.style.color = "black";
+        toastHeader.style.borderBottom = "1px solid black";
+        toastHeader.style.textAlign = "center";
+
+        var toastTitle = document.createElement("strong");
+        toastTitle.classList.add("me-auto");
+        toastTitle.innerText = "Copied!";
+        toastHeader.style.fontSize = "20px";
+        toastHeader.appendChild(toastTitle);
+
+        var toastButton = document.createElement("button");
+        toastButton.classList.add("btn-close");
+        toastButton.setAttribute("type", "button");
+        toastButton.setAttribute("data-bs-dismiss", "toast");
+        toastButton.setAttribute("aria-label", "Close");
+        toastHeader.appendChild(toastButton);
+
+        toast.appendChild(toastHeader);
+
+        var toastBody = document.createElement("div");
+        toastBody.classList.add("toast-body");
+        toastBody.innerText = text;
+        toastBody.style.backgroundColor = "darkorchid";
+        toastBody.style.fontSize = "17px";
+        toastBody.style.color = "cyan";
+        toastBody.style.textAlign = "center";
+        toast.appendChild(toastBody);
+
+        document.body.appendChild(toast);
+
+        var toast = new bootstrap.Toast(toast);
+        toast.show();
+    }
+</script>
+{% endblock %}
+{% block custom_js %}
+<script src="https://kit.fontawesome.com/0bb57d554c.js" crossorigin="anonymous"></script>
+{% endblock %}

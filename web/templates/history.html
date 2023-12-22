@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Search History - ShoDNA{% endblock %}
+
+{% block body_section %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-8">
+      <h2 style="color: aliceblue; text-align: center;">Search History</h2>
+      <br>
+      <form method="POST" action="/history" class="input-group mb-3">
+        <input name="search" id="search-input" class="form-control" placeholder="Search by Date, QUERY, or TAG"
+          aria-label="Search" aria-describedby="search-btn">
+        <button type="submit" class="btn btn-primary" id="search-btn">Search</button>
+      </form>
+      <div class="search-results">
+        <meta id="my-data" data-name="{{name}}" data-other="{{search_results}}">
+        <ul id="search-results-list">
+          {% if search_results == None %}
+          <li style="color: aliceblue;">No results found.</li>
+          {% else %}
+          {% for key, value in search_results.items() %}
+          <li style="color: aliceblue;">
+            <span data-type="query" style="color: rgb(251, 255, 0); font-weight: bolder;">Query:</span> {{ value.query
+            }}<br>
+            <span data-type="output" style="color: aqua; font-weight: bolder;">Output:</span> {{ value.output }}<br>
+            <span data-type="date" style="color: aqua; font-weight: bolder;">Date:</span> {{ value.date }}<br>
+            <span data-type="tag" style="color: aqua; font-weight: bolder;">Tag:</span> {{ value.tag }}<br>
+            <br>
+            <a href="/more_info/{{ key }}" class="btn btn-primary more-info-button">More Info</a>
+            <a href="/enum/{{ key }}" class="btn btn-danger delete-button">Enum</a>
+          </li>
+          <br>
+          <hr style="border: 10px; color: aliceblue">
+          {% endfor %}
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+  const searchInput = document.getElementById("search-input");
+</script>
+{% endblock %}

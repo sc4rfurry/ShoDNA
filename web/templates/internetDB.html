@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Search - ShoDNA{% endblock %}
+
+{% block custom_css %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/css/search.css') }}">
+<style>
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-control:focus {
+        color: #495057;
+        background-color: #fff;
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .form-control:invalid {
+        border-color: #dc3545;
+        background-color: #fff;
+    }
+
+    .form-control:valid {
+        border-color: #28a745;
+        background-color: #fff;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+</style>
+{% endblock %}
+
+{% block body_section %}
+<div class="container-fluid p-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow">
+                <div class="card-body p-5">
+                    <h1 class="mb-4" style="text-align: center;color: seashell;">internetDB Search</h1>
+                    <form method="post">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Enter Valid IP Address" id="ip_address"
+                                name="ip_address"
+                                pattern="^(25[0-5]|2[0-4]\d|1\d\d|\d{1,2})\.(25[0-5]|2[0-4]\d|1\d\d|\d{1,2})\.(25[0-5]|2[0-4]\d|1\d\d|\d{1,2})\.(25[0-5]|2[0-4]\d|1\d\d|\d{1,2})$"
+                                required>
+                            <div class="invalid-feedback">
+                                Please enter a valid IP address.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

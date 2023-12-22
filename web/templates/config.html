@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Configuration</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/config.css') }}">
+</head>
+
+<body class="bg-dark">
+    <div class="container mt-5">
+        <div class="card bg-dark text-white">
+            <div class="card-body">
+                <a href="/" class="btn btn-primary btn-sm float-left">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left-circle-fill"
+                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M8 16A8 8 0 110 8a8 8 0 018 8zm-.5-4.5a.5.5 0 00.5-.5V7.5a.5.5 0 00-1 0v3a.5.5 0 00.5.5z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Back
+                </a>
+                <br>
+                <br>
+                <br>
+                <h2 class="card-title">Configuration</h2>
+                {% if message %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+                {% endif %}
+                {% if error %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+                {% endif %}
+                {% if data %}
+                <form method="POST" action="/config">
+                    <div class="form-group">
+                        <label for="shodanApiKey">Shodan API Key</label>
+                        <input type="text" class="form-control" id="shodanApiKey" name="shodan_api_key"
+                            value="{{ data }}" placeholder="Enter your Shodan API Key" style="color: black;">
+                    </div>
+                    <button type="button" id="changeKeyBtn" class="btn btn-secondary">Change Key</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+                {% else %}
+                <form method="POST" action="/config">
+                    <div class="form-group">
+                        <label for="shodanApiKey">Shodan API Key</label>
+                        <input type="text" class="form-control" id="shodanApiKey" name="shodan_api_key"
+                            placeholder="Enter your Shodan API Key">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+{% block custom_js %}
+<script>
+    $(document).ready(function () {
+        $(".btn").hover(function () {
+            $(this).addClass("animated pulse");
+        }, function () {
+            $(this).removeClass("animated pulse");
+        });
+    });
+
+    $(document).ready(function () {
+        var shodanApiKey = $("#shodanApiKey").val();
+        if (shodanApiKey) {
+            $("#shodanApiKey").prop("readonly", true);
+            $("button[type='submit']").prop("disabled", true);
+        }
+
+        $("#changeKeyBtn").on("click", function () {
+            $("#shodanApiKey").prop("readonly", false);
+            $("button[type='submit']").prop("disabled", false);
+        });
+    });
+</script>
+{% endblock %}
+
+</html>

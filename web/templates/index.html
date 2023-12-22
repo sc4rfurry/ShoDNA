@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block welcome %}
+<div class="p-4">
+  <div class="welcome">
+    <div class="content rounded-3 p-3">
+      <h1 class="fs-3">Welcome to Dashboard</h1>
+      <p class="mb-0">Hello {% block user %}<b style="color: cyan;">{{user | safe}}</b>{% endblock %}, welcome to <scapn
+          style="color: burlywood;font-weight: bolder;">ShoDNA</scapn> ..!</p>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block body_section %}
+<div class="container">
+  <section id="wrapper">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"
+          style="text-align: center;font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;font-weight: bolder;font-size: 30px;">
+          README.md</h4>
+        <div class="mb-3">
+          <div class="card">
+            <div class="card-body">
+              <p class="card-text">{{ content | safe }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+  </section>
+</div>
+{% endblock %}

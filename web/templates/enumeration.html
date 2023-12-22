@@ -1,0 +1,954 @@
+{% extends "base.html" %}
+
+{% block title %}ShoDNA - Enumeration{% endblock %}
+
+{% block custom_css %}
+<style>
+    .search-bar {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .nav-tabs {
+        background-color: #007BFF;
+        border-radius: 5px;
+        color: white;
+    }
+
+    .nav-tabs .nav-item {
+        margin-right: 10px;
+    }
+
+    .nav-tabs .nav-link {
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .nav-tabs li a {
+        color: white;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: #a4c5e9;
+    }
+
+    .tab-content {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .tab-pane {
+        animation: fadeIn 0.5s;
+    }
+
+    .data-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .list-item {
+        margin-bottom: 10px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+        transition: transform 0.3s ease;
+    }
+
+    .single-data {
+        font-style: italic;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+        transition: transform 0.3s ease;
+    }
+
+    /* Hover effect for single data */
+    .single-data:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+        background-color: slateblue;
+        color: chartreuse;
+        font-weight: bolder;
+    }
+
+    /* Additional hover effect for list items */
+    .list-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: slateblue;
+        color: chartreuse;
+        font-weight: bolder;
+    }
+
+    /* Randomized animation using keyframes */
+    @keyframes randomAnimation {
+        0% {
+            transform: rotate(0);
+        }
+
+        25% {
+            transform: rotate(45deg);
+        }
+
+        50% {
+            transform: rotate(-45deg);
+        }
+
+        75% {
+            transform: rotate(90deg);
+        }
+
+        100% {
+            transform: rotate(-90deg);
+        }
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .nav-tabs .nav-item {
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+
+        .nav-tabs .nav-link {
+            padding: 10px 15px;
+        }
+
+        .tab-content {
+            padding: 10px;
+        }
+
+        .tab-content .tab-pane {
+            animation: none;
+        }
+
+        .tab-content .tab-pane.active {
+            animation: fadeIn 0.5s;
+        }
+    }
+
+    /* Table Styles */
+    .table-container {
+        max-width: 10rem;
+        justify-content: left;
+        align-items: left;
+    }
+
+    .table-container table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-container th,
+    .table-container td {
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .table-container th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    .table-container tr:hover td {
+        background-color: #f9f9f9;
+    }
+</style>
+{% endblock %}
+{% block body_section %}
+<div class="container my-5">
+    {% if scan_type == 'search' %}
+    <h1 style="color: aliceblue; text-align: center;">Enumeration <span style="color: greenyellow;font-weight: bold;">{{
+            query }}</span></h1>
+    {% else %}
+    <h1 style="color: aliceblue; text-align: center;">Enumeration <span style="color: greenyellow;font-weight: bold;">{{
+            ip }}</span></h1>
+    {% endif %}
+    <ul class="nav nav-tabs" id="myTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="results-tab" data-bs-toggle="tab" href="#results" role="tab"
+                aria-controls="results" aria-selected="true">Results</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="dns_reverse" data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1"
+                aria-selected="false">DNS/REVERSE</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="tab2-tab" data-bs-toggle="tab" href="#tab2" role="tab" aria-controls="tab2"
+                aria-selected="false">Whois</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="tab3-tab" data-bs-toggle="tab" href="#tab3" role="tab" aria-controls="tab3"
+                aria-selected="false">Port Scanning</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="tab4-tab" data-bs-toggle="tab" href="#tab4" role="tab" aria-controls="tab4"
+                aria-selected="false">Blacklist Check</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="tab5-tab" data-bs-toggle="tab" href="#tab5" role="tab" aria-controls="tab5"
+                aria-selected="false">ICMP + Traceroute</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="tab6-tab" data-bs-toggle="tab" href="#tab6" role="tab" aria-controls="tab6"
+                aria-selected="false">GeoLocation</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="tab7-tab" data-bs-toggle="tab" href="#tab7" role="tab" aria-controls="tab7"
+                aria-selected="false">ASN Lookup</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabsContent">
+        <div class="tab-pane fade show active" id="results" role="tabpanel" aria-labelledby="results-tab">
+            <h2 style="text-align: center;">Results </h2>
+            {% if data != [] %}
+            {% if data is iterable %}
+            <ul class="data-list">
+                {% for item in data %}
+                <li class="list-item">{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="single-data">{{ data }}</p>
+            {% endif %}
+            {% else %}
+            <p class="single-xdata">No data found ...!</p>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="tab1" role="tabpanel" aria-labelledby="dns_reverse">
+            <h2 style="text-align: center;">DNS/Reverse Lookup</h2>
+            {% if data is iterable and scan_type == 'search' %}
+            <ul class="data-list">
+                {% for item in data %}
+                <li class="list-item">{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% elif data and scan_type == 'idb' %}
+            <div>
+                <p class="single-data">{{ ip }}</p>
+            </div>
+            {% else %}
+            <p class="single-xdata">No data found ...!</p>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+            <h2 style="text-align: center;">Whois Lookup</h2>
+            {% if data is iterable and scan_type == 'search' %}
+            <ul class="data-list">
+                {% for item in data %}
+                <li class="list-item">{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% elif data and scan_type == 'idb' %}
+            <div>
+                <p class="single-data">{{ ip }}</p>
+            </div>
+            {% else %}
+            <p class="single-xdata">No data found ...!</p>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+            <h2 style="text-align: center;">Port Scan</h2>
+            <div class="scan-options" style="display: flex; justify-content: center;">
+                <div style="display: flex; flex-direction: row;">
+                    <input type="radio" id="builtInScan" name="scanOption" value="xxxx">
+                    <label for="builtInScan" style="margin-right: 10px;"> Built-in</label>
+
+                    <input type="radio" id="naabuScan" name="scanOption" value="naabu">
+                    <label for="naabuScan" style="margin-right: 10px;"> Naabu</label>
+
+                    <input type="radio" id="nmapScan" name="scanOption" value="nmap">
+                    <label for="nmapScan" style="margin-right: 10px;"> Nmap</label>
+
+                    <input type="radio" id="rustScan" name="scanOption" value="rustscan">
+                    <label for="rustScan"> Rustscan</label>
+                </div>
+            </div>
+            </br>
+            <div id="scanResult">
+                {% if data is iterable and scan_type == 'search' %}
+                <ul class="data-list">
+                    {% for item in data %}
+                    <li class="list-item">{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% elif data and scan_type == 'idb' %}
+                <div>
+                    <p class="single-data">{{ ip }}</p>
+                </div>
+                {% else %}
+                <p class="single-xdata">No data found ...!</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+            <h2 style="text-align: center;">IP Blacklist Check</h2>
+            {% if data is iterable and scan_type == 'search' %}
+            <ul class="data-list">
+                {% for item in data %}
+                <li class="list-item">{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% elif data and scan_type == 'idb' %}
+            <div>
+                <p class="single-data">{{ ip }}</p>
+            </div>
+            {% else %}
+            <p class="single-xdata">No data found ...!</p>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="tab5" role="tabpanel" aria-labelledby="tab5-tab">
+            <h2 style="text-align: center;">ICMP/Traceroute</h2>
+            {% if data is iterable and scan_type == 'search' %}
+            <ul class="data-list">
+                {% for item in data %}
+                <li class="list-item">{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% elif data and scan_type == 'idb' %}
+            <div>
+                <p class="single-data">{{ ip }}</p>
+            </div>
+            {% else %}
+            <p class="single-xdata">No data found ...!</p>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="tab6" role="tabpanel" aria-labelledby="tab6-tab">
+            <h2 style="text-align: center;">Geolocation Lookup</h2>
+            {% if data is iterable and scan_type == 'search' %}
+            <ul class="data-list">
+                {% for item in data %}
+                <li class="list-item">{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% elif data and scan_type == 'idb' %}
+            <div>
+                <p class="single-data">{{ ip }}</p>
+            </div>
+            {% else %}
+            <p class="single-xdata">No data found ...!</p>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="tab7" role="tabpanel" aria-labelledby="tab7-tab">
+            <h2 style="text-align: center;">ASN Lookup</h2>
+            {% if data is iterable and scan_type == 'search' %}
+            <ul class="data-list">
+                {% for item in data %}
+                <li class="list-item">{{ item }}</li>
+                {% endfor %}
+            </ul>
+            {% elif data and scan_type == 'idb' %}
+            <div>
+                <p class="single-data">{{ ip }}</p>
+            </div>
+            {% else %}
+            <p class="single-xdata">No data found ...!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block custom_js %}
+<script>
+    $(document).ready(function () {
+        $('#myTabs a').on('click', function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    });
+
+
+    $('.nav-tabs a').on('click', function () {
+        $('.nav-tabs .active').removeClass('active');
+        $(this).addClass('active');
+    });
+
+    function setRandomCursor() {
+        const cursorStyles = ['grab', 'pointer', 'wait', 'help', 'crosshair', 'not-allowed', 'progress', 'cell', 'text', 'vertical-text', 'alias', 'copy', 'move', 'no-drop', 'not-allowed', 'zoom-in', 'zoom-out', 'e-resize', 'ne-resize', 'nw-resize', 'n-resize', 'se-resize', 'sw-resize', 's-resize', 'w-resize', 'ew-resize', 'ns-resize', 'nesw-resize', 'nwse-resize', 'col-resize', 'row-resize', 'all-scroll', 'context-menu', 'cell', 'vertical-text', 'alias', 'copy', 'no-drop', 'not-allowed', 'grab', 'grabbing', 'move', 'zoom-in', 'zoom-out', 'e-resize', 'ne-resize', 'nw-resize', 'n-resize', 'se-resize', 'sw-resize', 's-resize', 'w-resize', 'ew-resize', 'ns-resize', 'nesw-resize', 'nwse-resize', 'col-resize', 'row-resize', 'all-scroll', 'context-menu'];
+        const randomCursor = cursorStyles[Math.floor(Math.random() * cursorStyles.length)];
+        document.body.style.cursor = randomCursor;
+    }
+
+    // Event listeners to change cursor on hover
+    document.querySelectorAll('.list-item, .single-data').forEach(item => {
+        item.addEventListener('mouseenter', setRandomCursor);
+        item.addEventListener('mouseleave', () => {
+            document.body.style.cursor = 'default';
+        });
+    });
+
+    function setRandomAnimation() {
+        const elements = document.querySelectorAll('.list-item, .single-data');
+        const animations = ['randomAnimation', 'none'];
+        const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+
+        elements.forEach(element => {
+            element.style.animationName = randomAnimation;
+        });
+    }
+
+    // Triggering random animation on page load
+    window.addEventListener('load', setRandomAnimation);
+
+    // Show the tab content on click
+    $('#myTabs a').on('click', function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+
+        // Get the ID of the clicked tab
+        const tabId = $(this).attr('aria-controls');
+        const scan = '{{ scan_type }}';
+        if (scan === 'search') {
+            switch (tabId) {
+                case 'tab1':
+                    break;
+                case 'tab2':
+                    break;
+                case 'tab3':
+                    break;
+                case 'tab4':
+                    break;
+                case 'tab5':
+                    break;
+                case 'tab6':
+                    break;
+                case 'tab7':
+                    break;
+                default:
+                    break;
+            }
+        } else if (scan === 'idb') {
+            switch (tabId) {
+                case 'tab1':
+                    break;
+                case 'tab2':
+                    break;
+                case 'tab3':
+                    break;
+                case 'tab4':
+                    break;
+                case 'tab5':
+                    break;
+                case 'tab6':
+                    break;
+                case 'tab7':
+                    break;
+                default:
+                    break;
+            }
+        }
+    });
+
+    // Function For API Endpoint
+    function g0Th4m(ip) {
+        return new Promise(function (resolve, reject) {
+            var url = '/api/enum/' + ip;
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    // Function For API Endpoint
+    function r0m4(ip, tool) {
+        var combined = ip + '&' + tool;
+        return new Promise(function (resolve, reject) {
+            var url = '/api/portscan/' + String(combined);
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    resolve(data);
+                },
+                error: function (error) {
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    function isAnyRadioButtonChecked() {
+        const radioButtons = document.querySelectorAll('input[name="scanOption"]');
+        let isAnyRadioButtonChecked = false;
+        radioButtons.forEach(radioButton => {
+            if (radioButton.checked) {
+                isAnyRadioButtonChecked = true;
+            }
+        });
+        if (!isAnyRadioButtonChecked) {
+            alert('Please select a scan option.');
+            return;
+        } else {
+            const selectedRadioButton = document.querySelector('input[name="scanOption"]:checked').value;
+            if (selectedRadioButton === 'Built-in') {
+                return "Built-in";
+            } else if (selectedRadioButton === 'Naabu') {
+                return "Naabu";
+            } else if (selectedRadioButton === 'Nmap') {
+                return "Nmap";
+            } else if (selectedRadioButton === 'Rustscan') {
+                return "Rustscan";
+            }
+        }
+    }
+
+    // Event listener to copy data to clipboard
+    document.querySelectorAll('.list-item, .single-data').forEach(item => {
+        item.addEventListener('click', () => {
+            const ip = item.textContent;
+            const scan = '{{ scan_type }}';
+            const tabId = $('.nav-tabs .active').attr('aria-controls');
+            let xdata = ip;
+
+            const truncateText = (text, maxLength) => {
+                return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+            };
+
+            const copyToClipboard = async (text) => {
+                try {
+                    if (navigator.clipboard) {
+                        await navigator.clipboard.writeText(text);
+                    } else {
+                        const textarea = document.createElement('textarea');
+                        textarea.value = text;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                    }
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            };
+
+            if (tabId === 'results') {
+                const successMessage = `${truncateText(xdata, 50)} <span style="color:cyan;font-weight:bolder;">copied to clipboard!</span>`;
+                const errorMessage = `${truncateText(xdata, 20)} could not be copied to clipboard!`;
+
+                const showToast = (type, message, duration) => {
+                    const toast = createToast(type, message);
+                    document.body.appendChild(toast);
+
+                    toast.classList.add('animate__animated', 'animate__fadeInUp');
+
+                    setTimeout(() => {
+                        toast.remove();
+                    }, duration);
+                    toast.addEventListener('click', () => {
+                        toast.remove();
+                    });
+                };
+
+                copyToClipboard(ip).then(success => {
+                    if (success) {
+                        showToast('success', successMessage, 2000);
+                    } else {
+                        showToast('danger', errorMessage, 3000);
+                    }
+                });
+            } else {
+                if (scan === 'search' || scan === 'idb') {
+                    if (tabId === 'tab1') {
+                        showLoader();
+                        g0Th4m(ip)
+                            .then(function (response) {
+                                var dnsLookupValue = response.dns_lookup;
+                                var reverseDnsValue = response.reverse_dns;
+
+                                if (dnsLookupValue === '') {
+                                    dnsLookupValue = 'N/A';
+                                }
+
+                                var cardHtml = `
+                                    <div class="card border-primary mb-3" style="max-width: 30rem;">
+                                        <div class="card-header bg-primary text-white">
+                                            <h4 class="card-title">DNS/Reverse DNS</h4>
+                                        </div>
+                                        <div class="card-body text-dark">
+                                            <h5 class="card-title">DNS Lookup:</h5>
+                                            <p class="card-text">${dnsLookupValue}</p>
+                                            <h5 class="card-title">Reverse DNS:</h5>
+                                            <p class="card-text">${reverseDnsValue}</p>
+                                        </div>
+                                        <div class="card-footer bg-transparent border-primary">
+                                            <small class="text-muted">Last updated: ${new Date().toLocaleString()}</small>
+                                        </div>
+                                    </div>
+                                `;
+
+                                document.querySelector('#tab1').innerHTML = cardHtml;
+                                document.querySelector('#tab1').style.display = 'flex';
+                                document.querySelector('#tab1').style.justifyContent = 'center';
+                                document.querySelector('#tab1').style.alignItems = 'center';
+                                document.querySelector('#tab1').style.flexDirection = 'column';
+                                document.querySelector('#tab1').style.animation = 'fadeIn 0.5s';
+
+                                document.querySelector('.loader').remove();
+
+                                var reloadIcon = `
+                                    <div class="d-flex justify-content-center">
+                                    <button class="btn btn-outline-primary" id="reloadTab1">
+                                `;
+                                document.querySelector('#tab1').innerHTML += reloadIcon;
+                                document.querySelector('#reloadTab1').innerHTML += '<i class="uil uil-reload me-2"></i>GoBack';
+                                document.querySelector('#reloadTab1').addEventListener('click', () => {
+                                    location.reload();
+                                    document.querySelector('#tab1-tab').classList.add('active');
+                                    document.querySelector('#reloadTab1').remove();
+                                });
+                            })
+                            .catch(function (error) {
+                                console.error(error);
+                            });
+                    } else if (tabId === 'tab2') {
+                        showLoader();
+                        g0Th4m(ip)
+                            .then(function (response) {
+                                var whoisValue = response.whois;
+                                let formattedData = '';
+
+                                for (const key in whoisValue) {
+                                    if (whoisValue.hasOwnProperty(key)) {
+                                        formattedData += `<span style="color:green;font-weight:bolder;"><strong>${key}:</strong></span> ${whoisValue[key]}<br>`;
+                                    }
+                                }
+
+                                if (formattedData === '') {
+                                    formattedData = 'N/A';
+                                }
+
+                                var cardHtml = `
+                                    <div class="card border-primary mb-3" style="max-width: 30rem;">
+                                        <div class="card-header bg-primary text-white">
+                                            <h4 class="card-title">Whois Lookup</h4>
+                                        </div>
+                                        <div class="card-body text-dark">
+                                            <h5 class="card-title">Whois Data:</h5>
+                                            <div class="card-text">${formattedData}</div>
+                                        </div>
+                                        <div class="card-footer bg-transparent border-primary">
+                                            <small class="text-muted">Last updated: ${new Date().toLocaleString()}</small>
+                                        </div>
+                                    </div>
+                                `;
+
+                                const tab2 = document.querySelector('#tab2');
+                                tab2.innerHTML = cardHtml;
+                                tab2.style.display = 'flex';
+                                tab2.style.justifyContent = 'center';
+                                tab2.style.alignItems = 'center';
+                                tab2.style.flexDirection = 'column';
+                                tab2.style.animation = 'fadeIn 0.5s';
+
+                                document.querySelector('.loader').remove();
+
+                                var reloadIcon = `
+                                    <div class="d-flex justify-content-center">
+                                        <button class="btn btn-outline-primary" id="reloadTab6">
+                                            <i class="uil uil-reload me-2"></i>GoBack
+                                        </button>
+                                    </div>
+                                `;
+
+                                tab2.insertAdjacentHTML('beforeend', reloadIcon);
+
+                                document.querySelector('#reloadTab6').addEventListener('click', () => {
+                                    location.reload();
+                                    document.querySelector('#tab2-tab').classList.add('active');
+                                    document.querySelector('#reloadTab6').remove();
+                                });
+                            })
+                            .catch(function (error) {
+                                console.error(error);
+                            });
+                    } else if (tabId === 'tab3') {
+                        isAnyRadioButtonChecked();
+                        let selectedRadioButton;
+
+                        try {
+                            selectedRadioButton = document.querySelector('input[name="scanOption"]:checked').value;
+                        } catch (error) {
+                            return;
+
+                            try {
+                                // Attempt to get the selected radio button on Windows using an alternative method
+                                const radioButtons = document.querySelectorAll('input[name="scanOption"]');
+                                const checkedRadioButton = Array.from(radioButtons).find(radioButton => radioButton.checked);
+
+                                if (checkedRadioButton) {
+                                    selectedRadioButton = checkedRadioButton.value;
+                                } else {
+                                    // Handle the case where no radio button is checked on Windows
+                                    return;
+                                }
+                            } catch (windowsError) {
+                                // Handle the error on Windows
+                                console.error("Error on Windows:", windowsError.message);
+                            }
+                        }
+                        showLoader();
+                        r0m4(ip, selectedRadioButton)
+                            .then(function (response) {
+                                for (const key in response) {
+                                    if (response.hasOwnProperty(key)) {
+                                        if (response[key] === '' || response[key] === 'None') {
+                                            response[key] = 'N/A';
+                                        }
+                                    }
+                                }
+                                var host = response.host;
+                                var naabu = response.naabu;
+                                var nmap = response.nmap;
+                                var rustscan = response.rustscan;
+                                var status = response.status;
+                                var tool = response.tool;
+
+                                alert(host + naabu + nmap + rustscan + status + tool);
+                                document.querySelector('.loader').remove();
+                            })
+                            .catch(function (error) {
+                                console.error(error);
+                            });
+
+                    } else if (tabId === 'tab4') {
+
+                    } else if (tabId === 'tab5') {
+
+                    } else if (tabId === 'tab6') {
+                        showLoader();
+                        g0Th4m(ip)
+                            .then(function (response) {
+                                var geoLocationValue = response.geo_location;
+                                let formattedData = '';
+
+                                for (const key in geoLocationValue) {
+                                    if (geoLocationValue.hasOwnProperty(key)) {
+                                        formattedData += `<span style="color:green;font-weight:bolder;"><strong>${key}:</strong></span> ${geoLocationValue[key]}<br>`;
+                                    }
+                                }
+
+                                if (formattedData === '') {
+                                    formattedData = 'N/A';
+                                }
+
+                                var cardHtml = `
+                                    <div class="card border-primary mb-3" style="max-width: 30rem;">
+                                        <div class="card-header bg-primary text-white">
+                                            <h4 class="card-title">Geolocation Lookup</h4>
+                                        </div>
+                                        <div class="card-body text-dark">
+                                            <h5 class="card-title">Geolocation Data:</h5>
+                                            <div class="card-text">${formattedData}</div>
+                                        </div>
+                                        <div class="card-footer bg-transparent border-primary">
+                                            <small class="text-muted">Last updated: ${new Date().toLocaleString()}</small>
+                                        </div>
+                                    </div>
+                                `;
+
+                                const tab6 = document.querySelector('#tab6');
+                                tab6.innerHTML = cardHtml;
+                                tab6.style.display = 'flex';
+                                tab6.style.justifyContent = 'center';
+                                tab6.style.alignItems = 'center';
+                                tab6.style.flexDirection = 'column';
+                                tab6.style.animation = 'fadeIn 0.5s';
+
+                                document.querySelector('.loader').remove();
+
+                                var reloadIcon = `
+                                    <div class="d-flex justify-content-center">
+                                        <button class="btn btn-outline-primary" id="reloadTab6">
+                                            <i class="uil uil-reload me-2"></i>GoBack
+                                        </button>
+                                    </div>
+                                `;
+
+                                tab6.insertAdjacentHTML('beforeend', reloadIcon);
+
+                                document.querySelector('#reloadTab6').addEventListener('click', () => {
+                                    location.reload();
+                                    document.querySelector('#tab2-tab').classList.add('active');
+                                    document.querySelector('#reloadTab6').remove();
+                                });
+                            })
+                            .catch(function (error) {
+                                console.error(error);
+                            });
+                    } else if (tabId === 'tab7') {
+                        showLoader();
+                        g0Th4m(ip)
+                            .then(function (response) {
+                                let asnLookupValue = getNestedValue(response, 'ip2asn');
+                                let formattedData = '';
+
+                                function getNestedValue(obj, path) {
+                                    const keys = path.split('.');
+                                    return keys.reduce((accumulator, currentKey) => {
+                                        if (accumulator && accumulator.hasOwnProperty(currentKey)) {
+                                            return accumulator[currentKey];
+                                        }
+                                        return null;
+                                    }, obj);
+                                }
+
+                                function displayNestedData(data) {
+                                    for (const key in data) {
+                                        if (data.hasOwnProperty(key)) {
+                                            if (typeof data[key] === 'object') {
+                                                displayNestedData(data[key]);
+                                            } else {
+                                                formattedData += `<span style="color:green;font-weight:bolder;"><strong>${key}:</strong></span> ${data[key]}<br>`;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                displayNestedData(asnLookupValue);
+
+                                var cardHtml = `
+                                    <div class="card border-primary mb-3" style="max-width: 30rem;">
+                                        <div class="card-header bg-primary text-white">
+                                            <h4 class="card-title">ASN Lookup</h4>
+                                        </div>
+                                        <div class="card-body text-dark">
+                                            <h5 class="card-title">ASN Data:</h5>
+                                            <div class="card-text">${formattedData}</div>
+                                        </div>
+                                        <div class="card-footer bg-transparent border-primary">
+                                            <small class="text-muted">Last updated: ${new Date().toLocaleString()}</small>
+                                        </div>
+                                    </div>
+                                `;
+
+                                const tab7 = document.querySelector('#tab7');
+                                tab7.innerHTML = cardHtml;
+                                tab7.style.display = 'flex';
+                                tab7.style.justifyContent = 'center';
+                                tab7.style.alignItems = 'center';
+                                tab7.style.flexDirection = 'column';
+                                tab7.style.animation = 'fadeIn 0.5s';
+
+                                document.querySelector('.loader').remove();
+
+                                var reloadIcon = `
+                                    <div class="d-flex justify-content-center">
+                                        <button class="btn btn-outline-primary" id="reloadTab7">
+                                            <i class="uil uil-reload me-2"></i>GoBack
+                                        </button>
+                                    </div>
+                                `;
+
+                                tab7.insertAdjacentHTML('beforeend', reloadIcon);
+
+                                document.querySelector('#reloadTab7').addEventListener('click', () => {
+                                    location.reload();
+                                    document.querySelector('#tab7-tab').classList.add('active');
+                                    document.querySelector('#reloadTab7').remove();
+                                });
+                            })
+                            .catch(function (error) {
+                                console.error(error);
+                            });
+                    } else {
+                        alert('Selected Tab is not Valid.');
+                    }
+                }
+            }
+        });
+    });
+
+
+    // Function to create a toast
+    function createToast(type, message) {
+        const toast = document.createElement('div');
+        toast.classList.add('toast');
+        toast.classList.add('show');
+        toast.classList.add(`bg-${type}`);
+        toast.classList.add('text-white');
+        toast.classList.add('align-items-center');
+        toast.classList.add('mb-3');
+        toast.classList.add('mt-3');
+        toast.classList.add('ms-auto');
+        toast.classList.add('me-3');
+        toast.classList.add('rounded-pill');
+        toast.classList.add('fade');
+        toast.style.position = 'fixed';
+        toast.style.bottom = '0';
+        toast.style.right = '0';
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.setAttribute('data-bs-delay', '5000');
+        toast.setAttribute('data-bs-autohide', 'true');
+        toast.innerHTML = ` <div class="d-flex"> <div class="toast-body"> <i class="uil uil-exclamation-circle me-2"></i> <strong> ${message}</strong> </div> <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button> </div>`;
+        return toast;
+    }
+
+    // Function to create a loader
+    function createLoader() {
+        const loader = document.createElement('div');
+        loader.classList.add('loader');
+        loader.classList.add('d-flex');
+        loader.classList.add('justify-content-center');
+        loader.classList.add('align-items-center');
+        loader.classList.add('mt-3');
+        loader.classList.add('mb-3');
+        loader.classList.add('ms-auto');
+        loader.classList.add('me-3');
+        loader.classList.add('rounded-pill');
+        loader.classList.add('fade');
+        loader.style.position = 'fixed';
+        loader.style.bottom = '0';
+        loader.style.right = '0';
+        loader.style.zIndex = '9999';
+        loader.style.width = '100px';
+        loader.style.height = '100px';
+        loader.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        // Loader HTML
+        loader.innerHTML = `
+            <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Loading...</span>
+            </div>
+        `;
+        return loader;
+    }
+
+    // Function to show loader
+    function showLoader() {
+        const loader = createLoader();
+        document.body.appendChild(loader);
+        loader.classList.add('animate__animated', 'animate__fadeIn');
+    }
+</script>
+{% endblock %}

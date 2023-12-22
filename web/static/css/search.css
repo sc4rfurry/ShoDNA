@@ -1,0 +1,41 @@
+:root {
+	--dk-gray-100: #F3F4F6;
+	--dk-gray-200: #E5E7EB;
+	--dk-gray-300: #D1D5DB;
+	--dk-gray-400: #9CA3AF;
+	--dk-gray-500: #6B7280;
+	--dk-gray-600: #4B5563;
+	--dk-gray-700: #374151;
+	--dk-gray-800: #1F2937;
+	--dk-gray-900: #111827;
+	--dk-dark-bg: #313348;
+	--dk-darker-bg: #2a2b3d;
+}
+/* Center the form and card */
+.card {
+    text-align: center;
+}
+
+/* Style the form container */
+.card-body {
+    background-color: var(--dk-darker-bg);
+}
+
+/* Style the form elements */
+form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-label {
+    font-weight: bold;
+    color: aliceblue;
+}
+
+/* Style the search button */
+.btn-primary {
+    width: 30%;
+    border-radius: 10px;
+}
+
+

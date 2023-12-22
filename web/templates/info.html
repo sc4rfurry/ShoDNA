@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}More Info - ShoDNA{% endblock %}
+
+{% block body_section %}
+<div class="container mt-5">
+    <h2>JSON Data</h2>
+    <div class="json-data">
+        {% for key, value in data.items() %}
+        <div class="json-field">
+            <strong>{{ key }}</strong>:
+            <div class="json-value">
+                {% if value | string %}
+                {{ value | string | safe }}
+                {% elif value | list %}
+                <ul>
+                    {% for item in value %}
+                    <li>{{ item | string | safe }}</li>
+                    {% endfor %}
+                </ul>
+                {% elif value | dict %}
+                <div class="json-data">
+                    {% for subkey, subvalue in value.items() %}
+                    <div class="json-field">
+                        <strong>{{ subkey }}</strong>:
+                        <div class="json-value">
+                            {{ subvalue | safe }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ value | safe }}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

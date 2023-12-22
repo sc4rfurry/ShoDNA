@@ -1,0 +1,46 @@
+body {
+    background-color: #111;
+}
+
+
+.card {
+    background-color: #333;
+    border: 1px solid #666;
+}
+
+
+.card-title {
+    color: #fff;
+}
+
+
+label {
+    color: #fff;
+}
+
+
+.form-control {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #666;
+}
+
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+
+.alert-success,
+.alert-danger {
+    background-color: #155724;
+    border-color: #155724;
+    color: #fff;
+}
+
+.alert-danger {
+    background-color: #721c24;
+    border-color: #721c24;
+    color: #fff;
+}
