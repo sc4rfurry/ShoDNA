@@ -17,68 +17,84 @@
   <link rel="icon" type="image/png" sizes="32x32" href="{{url_for('static', filename='images/favicon-32x32.png')}}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{url_for('static', filename='images/favicon-16x16.png')}}">
   <link rel="manifest" href="{{url_for('static', filename='images/site.webmanifest')}}">
+  <style>
+    body {
+      padding-left: 250px; /* Add padding to the body to account for the sidebar width */
+    }
+    .sidebar {
+      width: 250px;
+      z-index: 1000;
+    }
+    .main-content {
+      width: 100%;
+      padding: 20px;
+    }
+  </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-  <!-- partial:index.partial.html -->
-  <aside class="sidebar position-fixed top-0 left-0 overflow-auto h-100 float-left" id="show-side-navigation1">
-    <i class="uil-bars close-aside d-md-none d-lg-none" data-close="show-side-navigation1"></i>
-    <div class="sidebar-header d-flex justify-content-center align-items-center px-3 py-4">
-      <img class="rounded-pill img-fluid" width="200" src="https://robohash.org/nah" alt="">
-      <div class="ms-2">
-        <h5 class="fs-6 mb-0">
-          <a class="text-decoration-none" href="#"></a>
-        </h5>
-        <p class="mt-1 mb-0">{% block py_version %} {% endblock %}</p>
-      </div>
-    </div>
-
-    <ul class="categories list-unstyled">
-      <li class="">
-        <i class="uil uil-home"></i><a href="/"> Home</a>
-      </li>
-      <li class="">
-        <i class="uil uil-server-network-alt"></i><a href="/search"> Search</a>
-      </li>
-      <li class="">
-        <i class="uil uil-cell"></i><a href="/internetDB"> IDB</a>
-      </li>
-      <li class="">
-        <i class="uil uil-500px"></i><a href="/dorks"> Dorks</a>
-      </li>
-      <li class="">
-        <i class="uil uil-history"></i><a href="/history"> History</a>
-      </li>
-      <li class="">
-        <i class="uil uil-circuit"></i><a href="/config "> Settings</a>
-      </li>
-      <li class="">
-        <i class="uil uil-yin-yang"></i><a href="/about"> About</a>
-      </li>
-    </ul>
-    </br>
-  </aside>
-
-  <section id="wrapper">
-    <nav class="navbar navbar-expand-md">
-      <div class="container-fluid mx-2">
-        <div class="navbar-header">
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-navbar"
-            aria-controls="toggle-navbar" aria-expanded="false" aria-label="Toggle navigation">
-            <i class="uil-bars text-white"></i>
-          </button>
-          <p class="navbar-brand"><span class="main-color">Yet Another Shodan CLI Scanner with addition of DORKs related
-              to shodan.
-            </span> -> <a href="https://github.com/sc4rfurry" target="_blank">
-              <i class="uil uil-github" style="color:black;"></i></a>
-          </p>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <aside class="sidebar position-fixed top-0 start-0 overflow-auto h-100" id="show-side-navigation1" style="width: 250px;">
+      <i class="uil-bars close-aside d-md-none d-lg-none" data-close="show-side-navigation1"></i>
+      <div class="sidebar-header d-flex justify-content-center align-items-center px-3 py-4">
+        <img class="rounded-pill img-fluid" width="200" src="https://robohash.org/nah" alt="">
+        <div class="ms-2">
+          <h5 class="fs-6 mb-0">
+            <a class="text-decoration-none" href="#"></a>
+          </h5>
+          <p class="mt-1 mb-0">{% block py_version %} {% endblock %}</p>
         </div>
       </div>
-    </nav>
-    {% block welcome %}
 
-    {% endblock %}
-  </section>
+      <ul class="categories list-unstyled">
+        <li class="">
+          <i class="uil uil-home"></i><a href="/"> Home</a>
+        </li>
+        <li class="">
+          <i class="uil uil-server-network-alt"></i><a href="/search"> Search</a>
+        </li>
+        <li class="">
+          <i class="uil uil-cell"></i><a href="/internetDB"> IDB</a>
+        </li>
+        <li class="">
+          <i class="uil uil-500px"></i><a href="/dorks"> Dorks</a>
+        </li>
+        <li class="">
+          <i class="uil uil-history"></i><a href="/history"> History</a>
+        </li>
+        <li class="">
+          <i class="uil uil-circuit"></i><a href="/config "> Settings</a>
+        </li>
+        <li class="">
+          <i class="uil uil-yin-yang"></i><a href="/about"> About</a>
+        </li>
+      </ul>
+      </br>
+    </aside>
+
+    <!-- Main content wrapper -->
+    <div class="main-content">
+      <nav class="navbar navbar-expand-md">
+        <div class="container-fluid mx-2">
+          <div class="navbar-header">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggle-navbar"
+              aria-controls="toggle-navbar" aria-expanded="false" aria-label="Toggle navigation">
+              <i class="uil-bars text-white"></i>
+            </button>
+            <p class="navbar-brand"><span class="main-color">Yet Another Shodan CLI Scanner with addition of DORKs related
+                to shodan.
+              </span> -> <a href="https://github.com/sc4rfurry" target="_blank">
+                <i class="uil uil-github" style="color:black;"></i></a>
+            </p>
+          </div>
+        </div>
+      </nav>
+
+      {% block welcome %}
+      {% endblock %}
+    </div>
+  </div>
 
   {% block body_section %}
   {% endblock %}

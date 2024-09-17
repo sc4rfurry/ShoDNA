@@ -39,7 +39,7 @@
                 {% if data %}
                 <form method="POST" action="/config">
                     <div class="form-group">
-                        <label for="shodanApiKey">Shodan API Key</label>
+                        <label for="shodanApiKey">Shodan API Key <span style="color: cyan;">(Partially Hidden)</span></label>
                         <input type="text" class="form-control" id="shodanApiKey" name="shodan_api_key"
                             value="{{ data }}" placeholder="Enter your Shodan API Key" style="color: black;">
                     </div>
@@ -49,7 +49,7 @@
                 {% else %}
                 <form method="POST" action="/config">
                     <div class="form-group">
-                        <label for="shodanApiKey">Shodan API Key</label>
+                        <label for="shodanApiKey">Shodan API Key (Partially Hidden)</label>
                         <input type="text" class="form-control" id="shodanApiKey" name="shodan_api_key"
                             placeholder="Enter your Shodan API Key">
                     </div>
